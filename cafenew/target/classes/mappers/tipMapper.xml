@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TipMapper">
+	<sql id="cri">
+		<if test="type != null">
+			<trim prefix=" and (" suffix=")">
+				<choose>
+					<when test="type == 'TCW'.toString()">
+						title like '%'||#{keyword}||'%' or
+						content like '%'||#{keyword}||'%' or
+						writer like '%'||#{keyword}||'%'
+					</when>
+					<when test="type == 'TC'.toString()">
+						title like '%'||#{keyword}||'%' or
+						content like '%'||#{keyword}||'%'
+					</when>
+					<when test="type == 'TW'.toString()">
+						title like '%'||#{keyword}||'%' or
+						writer like '%'||#{keyword}||'%'
+					</when>
+					<when test="type == 'CW'.toString()">
+						content like '%'||#{keyword}||'%' or
+						writer like '%'||#{keyword}||'%'
+					</when>
+					<when test="type == 'T'.toString()">
+						title like '%'||#{keyword}||'%'
+					</when>
+					<when test="type == 'C'.toString()">
+						content like '%'||#{keyword}||'%'
+					</when>
+					<when test="type == 'W'.toString()">
+						writer like '%'||#{keyword}||'%'
+					</when>
+				</choose>
+			</trim>
+		</if>
+	</sql>
+	<insert id="add" parameterType="tvo">
+		insert into tbl_tip
+		values(seq_tip.nextval, #{title}, #{writer}, #{content}, sysdate,
+		sysdate, 0, #{imgfile}, 0)
+	</insert>
+	<select id="list" resultType="tvo" parameterType="cri">
+		<![CDATA[
+		SELECT tno, title, writer, content, readcount, modd8, commentcnt FROM
+		(SELECT /*+INDEX_DESC(tbl_tip tbl_tip_pk)*/
+			rownum rn, tno, title, writer, content, readcount, modd8, commentcnt 
+			FROM TBL_TIP WHERE tno > 0
+	]]>
+		<include refid="cri" />
+	<![CDATA[		
+			 and rownum <= #{pageNum}*#{amount})
+		WHERE rn > (#{pageNum}-1)*#{amount}
+	 ]]>
+	</select>
+	<select id="detail" parameterType="java.lang.Integer"
+		resultType="tvo">
+		select * from tbl_tip where tno = #{tno}
+	</select>
+	<update id="modify" parameterType="tvo">
+		update tbl_tip set 
+		title = #{title}, content = #{content}, modd8 = sysdate, imgfile = #{imgfile}
+		where tno = #{tno}
+	</update>
+	<delete id="remove" parameterType="java.lang.Integer">
+		delete from tbl_tip where tno = #{tno}
+	</delete>
+	<update id="rmImg" parameterType="java.util.HashMap">
+		update tbl_tip set imgfile = #{imgfile} where tno = #{tno}
+	</update>
+	<select id="total" resultType="java.lang.Integer" parameterType="cri">
+		select count(tno) from tbl_tip where tno > 0 <include refid="cri" />
+	</select>
+	<update id="upCount" parameterType="java.util.HashMap">
+		update tbl_tip set commentcnt = commentcnt + #{sign} where tno = #{tno}
+	</update>
+	<update id="upReadCount" parameterType="java.lang.Integer">
+		update tbl_tip set readcount = readcount + 1 where tno = #{tno}
+	</update>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.userMapper">
+	<select id="getUserOne" resultType="members">
+		SELECT * FROM tbl_member
+		<if test="userId != null">
+			where userId = #{userId};
+		</if>
+		<!-- <if test="nickname != null"> where nickname = #{nickname}; </if> -->
+	</select>
+
+	<insert id="userJoin">
+		insert into tbl_member (usernum,userId,password,email,authority,regd8)
+		values (seq_member.nextval, #{userId},#{password},#{email},1,sysdate)
+	</insert>
+
+</mapper>

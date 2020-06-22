@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CafeMapper">
+	<sql id="cno_cond">
+		where cno = #{cno}
+	</sql>
+	<insert id="add" parameterType="cvo">
+		insert into tbl_cafe
+		values(seq_cafe.nextval, #{cname}, #{clat}, #{clng},
+		#{addr},#{clstime}, #{cphone}, #{raddr})
+	</insert>
+	<select id="list" resultType="cvo" parameterType="cri">
+		<![CDATA[
+		SELECT cno, cname, clat, clng, addr FROM
+		(SELECT /*+INDEX_DESC(tbl_product tbl_product_pk)*/
+			rownum rn, pno, title, writer, readcount, modd8 FROM TBL_PRODUCT
+			WHERE ROWNUM <= #{pageNum}*#{amount})
+		WHERE rn > (#{pageNum}-1)*#{amount}
+		]]>
+	</select>
+	<select id="detail" parameterType="java.lang.Integer"
+		resultType="pvo">
+		select * from tbl_location
+		<include refid="pno_cond" />
+	</select>
+	<update id="modify" parameterType="pvo">
+		update tbl_location set locname = #{locname}, loclat = #{loclat},
+		loclng = loclng, addr = #{addr}, roadaddr=#{roadaddr},phone=#{phone}
+		<include refid="pno_cond" />
+	</update>
+	<delete id="remove" parameterType="java.lang.Integer">
+		delete from tbl_location
+		<include refid="pno_cond" />
+	</delete>
+	<select id="total" resultType="java.lang.Integer">
+		select count(pno) from
+		tbl_location
+	</select>
+</mapper>

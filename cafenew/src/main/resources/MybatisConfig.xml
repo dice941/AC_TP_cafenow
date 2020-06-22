@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		<typeAlias alias="tvo" type="com.myweb.domain.TipVO" />
+		<typeAlias alias="tcvo" type="com.myweb.domain.TipCommentVO" />
+		<typeAlias alias="cri" type="com.myweb.domain.Criteria" />
+		<typeAlias alias="nvo" type="com.myweb.domain.NoticeVO" />
+		<typeAlias alias="cvo" type="com.myweb.domain.CafeVO" />
+        <typeAlias alias="members" type="com.myweb.domain.MemberVO"/>
+	</typeAliases>
+
+</configuration>
+
+
+  
